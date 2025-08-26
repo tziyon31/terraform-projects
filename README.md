@@ -12,23 +12,20 @@ This project provisions an AWS infrastructure using **Terraform**:
 
 ## 📐 Architecture Overview
 
-            Internet
-                │
-         ┌──────▼──────┐
-         │   AWS ALB   │  (public subnets, SG: open :80)
-         └──────┬──────┘
-                │
-     ┌──────────┴──────────┐
-     │                      │
-┌────────▼────────┐ ┌───────▼────────┐
-│ Private Subnet │ │ Private Subnet│
-│ EC2 + Docker │ │ (spare) │
-│ Runs NGINX │ │ │
-│ SG: allow 80 ←─┘ └────────────────┘
-│ only from ALB │
-└────────┬────────┘
-│
-▼
+## 📐 Architecture Overview
+
+```mermaid
+flowchart TD
+    A[Internet] --> B[ALB<br/>(public subnets, SG: open :80)]
+    B --> C[EC2 App Instance<br/>(private subnet, no public IP)]
+    C --> D[NAT Instance<br/>(public subnet, SG: allow from VPC)]
+    
+    subgraph VPC
+      B
+      C
+      D
+    end
+
 NAT Instance (public subnet, SG: allow from VPC)
 
 Enables outbound internet for private EC2
